@@ -6,8 +6,13 @@ import Header from "./Header";
 
 
 function App() {
+	const carritoInicial = () => {
+		const carritoLocalStorage = localStorage.getItem("carrito");
+		return carritoLocalStorage ? JSON.parse(carritoLocalStorage) : [];
+	}
+
 	const [data, setData] = useState([]);
-    const [carrito, setCarrito] = useState([]);
+    const [carrito, setCarrito] = useState(carritoInicial);
 	
 	const ELEMENTO_MAXIMO = 10
 	const ELEMENTO_MINIMO = 1
@@ -16,6 +21,10 @@ function App() {
 	useEffect(() => {
 		setData(db);
 	}, []);
+
+	useEffect(() => {
+		localStorage.setItem("carrito", JSON.stringify(carrito))
+	}, [carrito])
 
     function agregarCarrito(elemento) {
         const existeElemento = carrito.findIndex(elementos => elementos.id === elemento.id)
@@ -28,6 +37,7 @@ function App() {
             elemento.cantidad = 1
             setCarrito([...carrito, elemento])
         }
+		almacenarLocalStorage();
         
     }
 
