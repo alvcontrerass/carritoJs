@@ -8,6 +8,9 @@ import Header from "./Header";
 function App() {
 	const [data, setData] = useState([]);
     const [carrito, setCarrito] = useState([]);
+	
+	const ELEMENTO_MAXIMO = 10
+	const ELEMENTO_MINIMO = 1
 
     //useEffect para cargar las guitarras desde db
 	useEffect(() => {
@@ -17,6 +20,7 @@ function App() {
     function agregarCarrito(elemento) {
         const existeElemento = carrito.findIndex(elementos => elementos.id === elemento.id)
         if (existeElemento >= 0) {
+			if(carrito[existeElemento].cantidad >= ELEMENTO_MAXIMO) return
             const carritoActualizado = [...carrito]
             carritoActualizado[existeElemento].cantidad++
             setCarrito(carritoActualizado)
@@ -27,9 +31,47 @@ function App() {
         
     }
 
+	function eliminarElemento(id) {
+		setCarrito(preCarrito => preCarrito.filter(elementos => elementos.id !== id))
+	}
+
+	function agregarCantidad(id) {
+		const carritoActualizado = carrito.map( elemento => {
+			if(elemento.id === id && elemento.cantidad < ELEMENTO_MAXIMO) {
+				return {
+					...elemento, cantidad: elemento.cantidad + 1
+				}
+			}
+			return elemento;
+		})
+		setCarrito(carritoActualizado)
+	}
+
+	function restarCantidad(id) {
+		const carritoActualizado = carrito.map( elemento => {
+			if(elemento.id === id && elemento.cantidad > ELEMENTO_MINIMO) {
+				return {
+					...elemento, cantidad: elemento.cantidad - 1
+				}
+			}
+			return elemento
+		})
+		setCarrito(carritoActualizado)
+	}
+
+	function limpiarCarrito() {
+		setCarrito([])
+	}
+
 	return (
 		<>
-			<Header />
+			<Header
+				carrito={carrito}
+				eliminarElemento={eliminarElemento}
+				agregarCantidad={agregarCantidad}
+				restarCantidad={restarCantidad}
+				limpiarCarrito={limpiarCarrito}
+			/>
 			<main className="container-xl mt-5">
 				1<h2 className="text-center">Nuestra Colección</h2>
 				<div className="row mt-5">
