@@ -7,10 +7,25 @@ import Header from "./Header";
 
 function App() {
 	const [data, setData] = useState([]);
+    const [carrito, setCarrito] = useState([]);
 
+    //useEffect para cargar las guitarras desde db
 	useEffect(() => {
 		setData(db);
 	}, []);
+
+    function agregarCarrito(elemento) {
+        const existeElemento = carrito.findIndex(elementos => elementos.id === elemento.id)
+        if (existeElemento >= 0) {
+            const carritoActualizado = [...carrito]
+            carritoActualizado[existeElemento].cantidad++
+            setCarrito(carritoActualizado)
+        } else {
+            elemento.cantidad = 1
+            setCarrito([...carrito, elemento])
+        }
+        
+    }
 
 	return (
 		<>
@@ -22,6 +37,8 @@ function App() {
                         <Guitarra 
                             key={guitarra.id}
                             guitarra={guitarra}
+                            setCarrito={setCarrito}
+                            agregarCarrito={agregarCarrito}
                         />
                     )
                 )}
